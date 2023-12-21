@@ -1,4 +1,3 @@
-truncate table catalog;
 insert into catalog values ('abcr', 'All Butter Croissant', 0.75);
 insert into catalog values ('ccr', 'Chocolate Croissant', 0.95);
 insert into catalog values ('b', 'Fresh Baguette', 1.60);
