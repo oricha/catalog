@@ -1,1 +1,15 @@
 
+spring:
+  datasource:
+#    url: ${db.url:}
+    url: jdbc:postgresql://localhost:5432/postgres
+#    username: ${db.username}
+    username: postgres
+    password: password
+#    password: ${db.password}
+  flyway:
+    baseline-on-migrate: true
+
+  sql:
+    init:
+      mode: always
