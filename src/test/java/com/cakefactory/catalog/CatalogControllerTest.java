@@ -1,6 +1,7 @@
 package com.cakefactory.catalog;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.Html;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
