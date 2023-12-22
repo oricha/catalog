@@ -20,7 +20,12 @@ public class JpaCatalogService implements CatalogService {
     @Override
     public Iterable<Item> getItems() {
         return StreamSupport.stream(itemRepository.findAll().spliterator(), false)
-                .map(entity -> new Item(entity.title, entity.price))
+                .map(entity -> new Item(entity.sku, entity.title, entity.price))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Item getItemBySku(String sku) {
+        return null;
     }
 }

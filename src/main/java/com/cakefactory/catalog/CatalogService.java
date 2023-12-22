@@ -6,5 +6,6 @@ import org.springframework.stereotype.Service;
 public interface CatalogService {
 
     Iterable<Item> getItems();
+    Item getItemBySku(String sku);
 
 }

@@ -7,9 +7,22 @@ spring:
     username: postgres
     password: password
 #    password: ${db.password}
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            client-id: ${facebook.client-id}
+            client-secret: ${facebook.client-secret}
+        provider:
+          facebook:
+            user-name-attribute: email
   flyway:
     baseline-on-migrate: true
 
   sql:
     init:
       mode: always
+
+server:
+  forward-headers-strategy: framework
