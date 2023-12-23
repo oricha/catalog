@@ -1,6 +1,9 @@
 package com.cakefactory.catalog;
 
+import com.cakefactory.basket.Basket;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.Html;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.hamcrest.Matchers;
@@ -15,7 +18,9 @@ import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +36,9 @@ class CatalogControllerTest {
 
     @MockBean
     CatalogService catalogService;
+
+    @MockBean
+    Basket basket;
 
     @BeforeEach
     void setUp() {
@@ -52,12 +60,24 @@ class CatalogControllerTest {
 
         HtmlPage page = webClient.getPage("http://localhost/");
 
-        assertThat(page.querySelectorAll(".item-title")).anyMatch(domElement -> expectedTitle.equals(domElement.asNormalizedText()));
+        assertThat(page.querySelectorAll(".item-title"))
+                .anyMatch(domElement -> expectedTitle.equals(domElement.asNormalizedText()));
+    }
+
+    @Test
+    @DisplayName("index page displays number of items in basket")
+    void displaysNumberOfItems() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+        when(basket.getTotalItems()).thenReturn(3);
+
+        HtmlPage page = webClient.getPage("http://localhost/");
+
+        DomNode totalElement = page.querySelector(".basket-total");
+        assertThat(totalElement).isNotNull();
+        assertThat(totalElement.asNormalizedText()).isEqualTo("3");
     }
 
     private void mockItems(String title, BigDecimal price) {
-        when(catalogService.getItems()).thenReturn(Collections.singletonList(new Item(title, price)));
+        when(catalogService.getItems()).thenReturn(Collections.singletonList(new Item("test", title, price)));
     }
-
 
 }

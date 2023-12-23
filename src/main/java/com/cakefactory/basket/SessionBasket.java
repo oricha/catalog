@@ -1,22 +1,62 @@
 package com.cakefactory.basket;
 
+import com.cakefactory.catalog.CatalogService;
+import com.cakefactory.catalog.Item;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @SessionScope
 class SessionBasket implements Basket {
 
-    private int totalItems = 0;
+    private final Map<String, BasketItem> items = new ConcurrentHashMap<>();
+    private final CatalogService catalogService;
+
+    public SessionBasket(CatalogService catalogService) {
+        this.catalogService = catalogService;
+    }
 
     @Override
     public void add(String sku) {
-        totalItems += 1;
+        Item item = this.catalogService.getItemBySku(sku);
+        this.items.compute(sku, (existingSku, existingItem) -> {
+            if (existingItem == null) {
+                return new BasketItem(item, 1);
+            }
+
+            return new BasketItem(existingItem.getItem(), existingItem.getQty() + 1);
+        });
     }
 
     @Override
     public int getTotalItems() {
-        return this.totalItems;
+        return this.items.values().stream().map(BasketItem::getQty).reduce(0, Integer::sum);
     }
+
+    @Override
+    public Collection<BasketItem> getItems() {
+        return this.items.values();
+    }
+
+    @Override
+    public void remove(String sku) {
+        this.items.computeIfPresent(sku, (s, existingItem) -> {
+            if (existingItem.getQty() == 1) {
+                return null;
+            }
+
+            return new BasketItem(existingItem.getItem(), existingItem.getQty() - 1);
+        });
+    }
+
+    @Override
+    public void clear() {
+        this.items.clear();
+    }
+
 
 }
