@@ -1,6 +1,5 @@
 package com.cakefactory.catalog.persistence;
 
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -9,10 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 @Entity
 @Table(name = "catalog")
-public class ItemEntity
-{
+class ItemEntity {
+
     @Id
     String sku;
 

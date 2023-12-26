@@ -7,9 +7,13 @@ spring:
     username: postgres
     password: password
 #    password: ${db.password}
+  mustache:
+    servlet:
+      expose-request-attributes: true
   flyway:
     baseline-on-migrate: true
 
   sql:
     init:
       mode: always
+

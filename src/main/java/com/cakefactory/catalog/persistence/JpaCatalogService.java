@@ -1,15 +1,15 @@
 package com.cakefactory.catalog.persistence;
 
-import com.cakefactory.catalog.CatalogService;
-import com.cakefactory.catalog.Item;
-import com.cakefactory.catalog.persistence.ItemRepository;
-import org.springframework.stereotype.Component;
-
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.cakefactory.catalog.CatalogService;
+import com.cakefactory.catalog.Item;
+
+import org.springframework.stereotype.Component;
+
 @Component
-public class JpaCatalogService implements CatalogService {
+class JpaCatalogService implements CatalogService {
 
     private final ItemRepository itemRepository;
 
@@ -20,7 +20,22 @@ public class JpaCatalogService implements CatalogService {
     @Override
     public Iterable<Item> getItems() {
         return StreamSupport.stream(itemRepository.findAll().spliterator(), false)
-                .map(entity -> new Item(entity.title, entity.price))
-                .collect(Collectors.toList());
+            .map(this::mapEntity)
+            .collect(Collectors.toList());
     }
+
+    @Override
+    public Item getItemBySku(String sku) {
+        ItemEntity entity = this.itemRepository.findBySku(sku);
+        if (entity == null) {
+            return null;
+        }
+
+        return mapEntity(entity);
+    }
+
+    Item mapEntity(ItemEntity entity) {
+        return new Item(entity.sku, entity.title, entity.price);
+    }
+
 }
